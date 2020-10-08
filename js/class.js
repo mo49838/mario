@@ -67,7 +67,6 @@ class Game {
             //move all background elements first
 
             //move all foreground elements second
-            let collisionDetected = false;
             this.frontObjs.forEach(obj => {
                 //update character coordinates
                 obj.moveCharacter(this.userAction);
@@ -169,10 +168,8 @@ class movingObject extends gameObject{
     moveCharacter(userAction)
     {
         //main character controlled by user actions
-        if (this.objectType == "mainChar"){
+        if (this.objectType == "!mainChar"){
             //move horizontal
-            //console.log(this.xPos+userAction.leftKey*-1*this.moveXinc+userAction.rightKey);
-            //console.log(this.yPos+userAction.downKey*-1*this.moveYinc+userAction.upKey*this.moveYinc);
             this.moveCharacterHor(this.xPos+userAction.leftKey*-1*this.moveXinc+userAction.rightKey*this.moveXinc);
             this.moveCharacterVer(this.yPos+(this.yPos+userAction.downKey*-1*this.moveYinc+userAction.upKey*this.moveYinc));
         //otherwise object controlled by movement
