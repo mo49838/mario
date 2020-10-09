@@ -15,15 +15,8 @@ class Game {
         this.frameNo = 0; //track frame as mario goes through a level
         this.levelNo = 0;
         this.timesRun = 0;  //used to stop setInterval
-        this.stopTime = 100;  //number of times for interval to run
-
-        //track main character actions
-        this.userAction = {
-            leftKey: 0,
-            rightKey: 0,
-            upKey: 0,
-            downKey: 0
-        };
+        this.stopTime = 1000;  //number of times for interval to run
+        this.keys = []; //track keys pressed
 
     }
     
@@ -36,13 +29,24 @@ class Game {
         //insert canvas into body
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
 
+        //create listeners to track arrow key changes
+        window.addEventListener('keydown', function (e) {
+            e.preventDefault();
+            this.keys = (this.keys || []);
+            this.keys[e.key] = (e.type == "keydown");
+            logger(`keys pressed ${this.keys}`, 'addEventListener', 'listener');
+        }.bind(this));
+        window.addEventListener('keyup', function (e) {
+            this.keys[e.key] = (e.type == "keydown");
+        }.bind(this));
+
         //create main character and display it
         let mainChar= new movingObject(1,10, 30, "blue", 0, this.height-30, "mainChar",this.context);
         this.frontObjs.push(mainChar);
 
         //create enemy
-        let enemy= new movingObject(2,10, 30, "red", 299, this.height-30, "enemy",this.context,-1);
-        this.frontObjs.push(enemy);
+        // let enemy= new movingObject(2,10, 30, "red", 299, this.height-30, "enemy",this.context,-1);
+        // this.frontObjs.push(enemy);
         //this.updateScreen();
         //triggers the screen to update every x ms
         this.interval = setInterval(this.updateScreen.bind(this), this.refreshSpeed);
@@ -56,7 +60,6 @@ class Game {
     //called to refresh screen by updating character positions
     updateScreen(){
         this.timesRun ++;
-     
         //only run x times
         if(this.timesRun > this.stopTime){
             clearInterval(this.interval);
@@ -64,12 +67,13 @@ class Game {
             //clear screen
             this.clear();
 
-            //move all background elements first
-
             //move all foreground elements second
-            this.frontObjs.forEach(obj => {
+            //this.frontObjs.forEach(obj => {
+            for (let i=0;i<this.frontObjs.length;i++)
+            {
                 //update character coordinates
-                obj.moveCharacter(this.userAction);
+                let obj = this.frontObjs[i];
+                obj.moveCharacter(this.keys);
 
                 obj.paintObject();
                 //check for conflict
@@ -77,11 +81,11 @@ class Game {
                     console.log("Collision detected");
                     this.stopTime = 0;
                 }
-            });   
+            }
+            //});   
+
         }
 
-        //reset user actions every refresh
-        this.resetUserActions();
     }
 
     //check for collision
@@ -103,8 +107,8 @@ class Game {
                 //check for overlap of objects                  
                 if ((thisBottom >= otherTop) && (thisTop <= otherBottom) && (thisRight >= otherLeft) && (thisLeft <= otherRight)){
                     collision = true;
-                    console.log(`1: ${inputObj.objectType} thisLeft ${thisLeft} thisRight ${thisRight} thisTop ${thisTop} thisBottom ${thisBottom}`)
-                    console.log(`2: ${obj.objectType} otherLeft ${otherLeft} otherRight ${otherRight} otherTop ${otherTop} otherBottom ${otherBottom}`)
+                    logger(`Collision obj1: ${inputObj.objectType} thisLeft ${thisLeft} thisRight ${thisRight} thisTop ${thisTop} thisBottom ${thisBottom}`,'checkForCollision','move');
+                    logger(`Collision obj2: ${obj.objectType} otherLeft ${otherLeft} otherRight ${otherRight} otherTop ${otherTop} otherBottom ${otherBottom}`,'checkForCollision','move');
     
                 }
             }
@@ -112,25 +116,6 @@ class Game {
         return collision;
     }
 
-    //register key presses
-    leftKey(){
-        this.userAction.leftKey = 1;
-    }
-    rightKey(){
-        this.userAction.rightKey = 1;
-    }
-    upKey(){
-        this.userAction.upKey = 1;
-    }
-    downKey(){
-        this.userAction.downKey = 1;
-    }
-    resetUserActions(){
-        this.userAction.leftKey = 0;
-        this.userAction.rightKey = 0;
-        this.userAction.upKey = 0;
-        this.userAction.downKey = 0;
-    }
 }
 
 //Parent class of all objects that appear in screen
@@ -147,9 +132,11 @@ class gameObject{
     }
 
     paintObject(){
+        this.context.save();
         this.context.fillStyle = this.color;
         this.context.fillRect(this.xPos, this.yPos, this.width, this.height);
-        //console.log("Painted object");
+        logger(`painted: ${this.xPos} ${this.yPos}`,'paintObject','move');
+        this.context.restore();  
     }
 
 
@@ -158,35 +145,54 @@ class gameObject{
 class movingObject extends gameObject{
     constructor(id,width, height, color, startX, startY, objectType,context,xDirection=1,yDirection=-1){
         super(id,width, height, color, startX, startY, objectType, context);
-        this.moveXinc=5;//default movement along X direction
-        this.moveYinc=5;//default movement along y direction
+        this.moveXinc=1;//default movement along X direction
+        this.moveYinc=1;//default movement along y direction
         this.xDirection=xDirection;  //-1 moves right to left, 1 moves left to right
         this.yDirection=yDirection;  //-1 moves bottom to top, 1 moves top to bottom
     }
 
     //generic function to move character and check for conflict
-    moveCharacter(userAction)
+    moveCharacter(userKeysPressed)
     {
+        let xValue = 0;
+        let yValue = 0;
+
         //main character controlled by user actions
-        if (this.objectType == "!mainChar"){
+        if (this.objectType == "mainChar" && userKeysPressed){
             //move horizontal
-            this.moveCharacterHor(this.xPos+userAction.leftKey*-1*this.moveXinc+userAction.rightKey*this.moveXinc);
-            this.moveCharacterVer(this.yPos+(this.yPos+userAction.downKey*-1*this.moveYinc+userAction.upKey*this.moveYinc));
+
+            //userKeysPressed is an array of every key press, switch statement wouldn't work
+            if (userKeysPressed["ArrowLeft"]){xValue = -1; }
+            if (userKeysPressed["ArrowRight"]) {xValue = 1; }
+            if (userKeysPressed["ArrowUp"]) { yValue = -1; }
+            if (userKeysPressed["ArrowDown"]) {yValue= 1; }
+
+            //adjust for direction
+            xValue*=this.xDirection;
+            yValue*=this.yDirection;
+
         //otherwise object controlled by movement
         }else{
 
-            this.moveCharacterHor();
+            xValue = this.moveXinc*this.xDirection;
+            yValue = this.moveYinc*this.yDirection;
+        }
+
+        if (xValue !=0 || yValue !=0){
+            logger(`${this.objectType} moving x:${xValue} y:${yValue}`,'moveCharacter','move');
+            this.moveCharacterHor(xValue);
+            this.moveCharacterVer(yValue);
         }
     }
 
     //move horizontal
-    moveCharacterHor(value = this.moveXinc*this.xDirection){
+    moveCharacterHor(value){
         this.xPos += value;
         //console.log(this.moveXinc + " " + this.xDirection);  
     }
 
     //move vertical 
-    moveCharacterVer(value = this.moveYinc*this.yDirection){
+    moveCharacterVer(value){
         //console.log(`${this.yPos} - value ${value} = ${this.yPos-value}`)
         this.yPos -= value;
     }
