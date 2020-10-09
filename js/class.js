@@ -16,7 +16,7 @@ class Game {
         this.frameNo = 0; //track frame as mario goes through a level
         this.levelNo = 0;
         this.timesRun = 0;  //used to stop setInterval
-        this.stopTime = 100;  //number of times for interval to run
+        this.stopTime = 300;  //number of times for interval to run
         this.keys = []; //track keys pressed
 
     }
@@ -51,14 +51,33 @@ class Game {
         //create main character and display it
         // let mainChar= new movingObject(1,10, 30, "blue", 0, this.height-30, "mainChar",this.context);
         
-        let char = mainChars[0];
-        let mainChar= new movingObject(1,50, 50,char.color,char.image,20, 150, char.objType,this.context,this.colorMode);
-        // let mainChar= new movingObject(1,char.width, char.height,char.image,char.startPos, this.height-char.height, char.objType,this.context);
-        this.frontObjs.push(mainChar);
+        let mainChar = mainChars[0];
+        //remove color if not in color mode
+        if (!this.colorMode)
+            mainChar.color = "";
+        //update starting x position based on width of game
+        if (mainChar.xPos == "end")
+            mainChar.xPos = this.width;
+        //update y position 
+        mainChar.yPos = this.height-mainChar.height;
+        //let mainObj= new movingObject(1,char.width, char.height,char.color,char.image,char.startPos, startY, char.objType,this.context,this.colorMode);
+        let mainObj= new movingObject(1,mainChar,this.context);
+        this.frontObjs.push(mainObj);
                             
         //create enemy
-        // let enemy= new movingObject(2,10, 30, "red", 299, this.height-30, "enemy",this.context,-1);
-        // this.frontObjs.push(enemy);
+        let enemChar = enemyChar[0];
+        //update starting x position based on width of game
+        if (enemChar.xPos == "end")
+            enemChar.xPos = this.width;
+        //update y position 
+        enemChar.yPos = this.height-enemChar.height;
+        //remove color if not in color mode
+        if (!this.colorMode)
+            enemChar.color = "";
+
+        let enemObj = new movingObject(2,enemChar,this.context);
+        // let enemObj = new movingObject(1,enem.width, enem.height,enem.color,enem.image,enem.startPos, startY2, enem.objType,this.context,this.colorMode);
+        this.frontObjs.push(enemObj);
         //this.updateScreen();
         //triggers the screen to update every x ms
         this.interval = setInterval(this.updateScreen.bind(this), this.refreshSpeed);
@@ -87,7 +106,8 @@ class Game {
                 //update character coordinates
                 let obj = this.frontObjs[i];
                 obj.moveCharacter(this.keys);
-
+                console.log(obj);
+                
                 obj.paintObject();
                 //check for conflict
                 if (this.checkForCollision(obj)){
@@ -133,33 +153,33 @@ class Game {
 
 //Parent class of all objects that appear in screen
 class gameObject{
-    constructor(id,width, height, color,image, startX, startY, objectType, context,colorMode){
+    // constructor(id,width, height, color,image, startX, startY, objectType, context,colorMode){
+    constructor(id,aGameObject, aContext){
         this.id=id;
-        this.width = width;
-        this.height = height;
-        this.color = color;
-        this.image = new Image(width, height);
-        this.image.src = image;
-        this.xPos = startX;
-        this.yPos = startY;
-        this.objectType = objectType;
-        this.context = context;
-        this.colorMode = colorMode;
+        this.width = aGameObject.width;
+        this.height = aGameObject.height;
+        this.color = aGameObject.color;
+        this.image = new Image();
+        this.image.src = aGameObject.image;
+        this.xPos = aGameObject.xPos;
+        this.yPos = aGameObject.yPos;
+        this.objectType = aGameObject.objectType;
+        this.context = aContext;
+        this.colorMode = aGameObject.colorMode;
+
     }
 
     paintObject(){
         
         //either use colors or graphics
-        if (this.colorMode){
-            logger(`about to paint: ${this.xPos} ${this.yPos}`,'paintObject','move');
+        if (this.color != ""){
+            logger(`about to paint: ${this.xPos} ${this.yPos}`,'paintObject','paint');
             this.context.fillStyle = this.color;
             this.context.fillRect(this.xPos, this.yPos, this.width, this.height);
         }else{
-            logger(`about to draw: ${this.image.src} ${this.xPos} ${this.yPos} ${this.width} ${this.height}`,'paintObject','move');
+            logger(`about to draw: ${this.image.src} ${this.xPos} ${this.yPos} ${this.width} ${this.height}`,'paintObject','paint');
             this.context.drawImage(this.image, this.xPos, this.yPos, this.width, this.height);
         }
-
-        
 
     }
 
@@ -167,12 +187,12 @@ class gameObject{
 }
 
 class movingObject extends gameObject{
-    constructor(id,width, height, color,image, startX, startY, objectType,context,colorMode,xDirection=1,yDirection=-1){
-        super(id,width, height, color, image, startX, startY, objectType, context,colorMode);
-        this.moveXinc=2;//default movement along X direction
-        this.moveYinc=2;//default movement along y direction
-        this.xDirection=xDirection;  //-1 moves right to left, 1 moves left to right
-        this.yDirection=yDirection;  //-1 moves bottom to top, 1 moves top to bottom
+    constructor(id,aMovingObject,aContext){
+        super(id,aMovingObject, aContext);
+        this.moveXinc=aMovingObject.moveXinc;//default movement along X direction
+        this.moveYinc=aMovingObject.moveYinc;//default movement along y direction
+        this.xDirection=aMovingObject.xDirection;  //-1 moves right to left, 1 moves left to right
+        this.yDirection=aMovingObject.yDirection;  //-1 moves bottom to top, 1 moves top to bottom
     }
 
     //generic function to move character and check for conflict
@@ -192,8 +212,8 @@ class movingObject extends gameObject{
             if (userKeysPressed["ArrowDown"]) {yValue= 1; }
 
             //adjust for direction
-            xValue*=this.xDirection;
-            yValue*=this.yDirection;
+            xValue*=this.xDirection*this.moveXinc;
+            yValue*=this.yDirection*this.moveYinc;
 
         //otherwise object controlled by movement
         }else{

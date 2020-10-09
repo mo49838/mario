@@ -1,26 +1,34 @@
 //character definitions
 const mainChars = [
     {
-        objType:"mainChar",
+        objectType:"mainChar",
         name: "Mario",
         width: 30,
         height: 30,
         color: "blue",
         image: "images/happy.png",
-        startPos: 0,
-        direction: 1   //go from right to left
+        xPos: 0,  //starting position x
+        yPos: 0,  //starting position y
+        xDirection: 1,   //go from right to left
+        yDirection: -1,   //go from bottom to top
+        moveXinc: 5,  //speed
+        moveYinc: 1,  //speed
     },
 ]
 const enemyChar = [
     {
-        objType:"enemy",
+        objectType:"enemy",
         name: "enemy1",
-        width: 30,
+        width: 20,
         height: 30,
         color: "red",
         image: "images/happy.png",
-        startPos: "end",
-        direction: -1   //go from left to right
+        xPos: "end",  //starting position x
+        yPos: 0,  //starting position y
+        xDirection: -1,   //go from left to right
+        yDirection: -1,   //go from bottom to top
+        moveXinc: 5,  //speed
+        moveYinc: 1,  //speed
     },
 ]
 const objectChar = [
