@@ -1,12 +1,13 @@
 console.log("defining classes");
 //highest level object that has attributes for every object
 class Game {
-    constructor(width,height,refreshSpeed)
+    constructor(width,height,refreshSpeed,colorMode=false)
     {
         //global variables for the class
         this.width = width;
         this.height = height;
-        this.refreshSpeed = refreshSpeed;
+        this.refreshSpeed = refreshSpeed;  //speed of refresh
+        this.colorMode=colorMode;  //true if use colors instead of graphics
         this.canvas = "";
         this.context = "";
         //this.mainChar = "";  //main character, always requiered in game (could be mario, luigi,..)
@@ -15,7 +16,7 @@ class Game {
         this.frameNo = 0; //track frame as mario goes through a level
         this.levelNo = 0;
         this.timesRun = 0;  //used to stop setInterval
-        this.stopTime = 1000;  //number of times for interval to run
+        this.stopTime = 100;  //number of times for interval to run
         this.keys = []; //track keys pressed
 
     }
@@ -29,6 +30,13 @@ class Game {
         //insert canvas into body
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
 
+        //test drawing image
+        // let img = new Image();
+        // img.src = "images/happy.png";
+        // this.context.drawImage(img,50,100,30,30);        
+        //this.context.fillRect(50,100,30,30);
+        
+
         //create listeners to track arrow key changes
         window.addEventListener('keydown', function (e) {
             e.preventDefault();
@@ -41,9 +49,13 @@ class Game {
         }.bind(this));
 
         //create main character and display it
-        let mainChar= new movingObject(1,10, 30, "blue", 0, this.height-30, "mainChar",this.context);
+        // let mainChar= new movingObject(1,10, 30, "blue", 0, this.height-30, "mainChar",this.context);
+        
+        let char = mainChars[0];
+        let mainChar= new movingObject(1,50, 50,char.color,char.image,20, 150, char.objType,this.context,this.colorMode);
+        // let mainChar= new movingObject(1,char.width, char.height,char.image,char.startPos, this.height-char.height, char.objType,this.context);
         this.frontObjs.push(mainChar);
-
+                            
         //create enemy
         // let enemy= new movingObject(2,10, 30, "red", 299, this.height-30, "enemy",this.context,-1);
         // this.frontObjs.push(enemy);
@@ -51,6 +63,7 @@ class Game {
         //triggers the screen to update every x ms
         this.interval = setInterval(this.updateScreen.bind(this), this.refreshSpeed);
  
+
     }
 
     clear(){
@@ -120,33 +133,44 @@ class Game {
 
 //Parent class of all objects that appear in screen
 class gameObject{
-    constructor(id,width, height, color, startX, startY, objectType, context){
+    constructor(id,width, height, color,image, startX, startY, objectType, context,colorMode){
         this.id=id;
         this.width = width;
         this.height = height;
         this.color = color;
+        this.image = new Image(width, height);
+        this.image.src = image;
         this.xPos = startX;
         this.yPos = startY;
         this.objectType = objectType;
         this.context = context;
+        this.colorMode = colorMode;
     }
 
     paintObject(){
-        this.context.save();
-        this.context.fillStyle = this.color;
-        this.context.fillRect(this.xPos, this.yPos, this.width, this.height);
-        logger(`painted: ${this.xPos} ${this.yPos}`,'paintObject','move');
-        this.context.restore();  
+        
+        //either use colors or graphics
+        if (this.colorMode){
+            logger(`about to paint: ${this.xPos} ${this.yPos}`,'paintObject','move');
+            this.context.fillStyle = this.color;
+            this.context.fillRect(this.xPos, this.yPos, this.width, this.height);
+        }else{
+            logger(`about to draw: ${this.image.src} ${this.xPos} ${this.yPos} ${this.width} ${this.height}`,'paintObject','move');
+            this.context.drawImage(this.image, this.xPos, this.yPos, this.width, this.height);
+        }
+
+        
+
     }
 
 
 }
 
 class movingObject extends gameObject{
-    constructor(id,width, height, color, startX, startY, objectType,context,xDirection=1,yDirection=-1){
-        super(id,width, height, color, startX, startY, objectType, context);
-        this.moveXinc=1;//default movement along X direction
-        this.moveYinc=1;//default movement along y direction
+    constructor(id,width, height, color,image, startX, startY, objectType,context,colorMode,xDirection=1,yDirection=-1){
+        super(id,width, height, color, image, startX, startY, objectType, context,colorMode);
+        this.moveXinc=2;//default movement along X direction
+        this.moveYinc=2;//default movement along y direction
         this.xDirection=xDirection;  //-1 moves right to left, 1 moves left to right
         this.yDirection=yDirection;  //-1 moves bottom to top, 1 moves top to bottom
     }
@@ -175,7 +199,7 @@ class movingObject extends gameObject{
         }else{
 
             xValue = this.moveXinc*this.xDirection;
-            yValue = this.moveYinc*this.yDirection;
+            //yValue = this.moveYinc*this.yDirection;
         }
 
         if (xValue !=0 || yValue !=0){

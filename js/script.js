@@ -4,8 +4,8 @@ console.log("javascript linked");
 var myGame = "";
 
 function startGame(){
-    //gameScreen takes width, height, refreshTime(ms)
-    myGame = new Game(500,300,50); 
+    //gameScreen takes width, height, refreshTime(ms), colorMode (true means ignore icons)
+    myGame = new Game(500,300,50,false); 
     myGame.start();
 }
 
