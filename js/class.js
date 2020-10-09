@@ -28,7 +28,8 @@ class Game {
         this.canvas.height = this.height;
         this.context = this.canvas.getContext("2d");
         //insert canvas into body
-        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        document.body.appendChild(document.createElement("br"));
+        document.body.appendChild(this.canvas, document.body);
 
         //test drawing image
         // let img = new Image();
@@ -53,6 +54,7 @@ class Game {
         
         let mainChar = mainChars[0];
         //remove color if not in color mode
+        console.log(this.colorMode+" mode")
         if (!this.colorMode)
             mainChar.color = "";
         //update starting x position based on width of game
@@ -60,7 +62,6 @@ class Game {
             mainChar.xPos = this.width;
         //update y position 
         mainChar.yPos = this.height-mainChar.height;
-        //let mainObj= new movingObject(1,char.width, char.height,char.color,char.image,char.startPos, startY, char.objType,this.context,this.colorMode);
         let mainObj= new movingObject(1,mainChar,this.context);
         this.frontObjs.push(mainObj);
                             
@@ -76,7 +77,6 @@ class Game {
             enemChar.color = "";
 
         let enemObj = new movingObject(2,enemChar,this.context);
-        // let enemObj = new movingObject(1,enem.width, enem.height,enem.color,enem.image,enem.startPos, startY2, enem.objType,this.context,this.colorMode);
         this.frontObjs.push(enemObj);
         //this.updateScreen();
         //triggers the screen to update every x ms
@@ -106,7 +106,6 @@ class Game {
                 //update character coordinates
                 let obj = this.frontObjs[i];
                 obj.moveCharacter(this.keys);
-                console.log(obj);
                 
                 obj.paintObject();
                 //check for conflict
@@ -123,15 +122,23 @@ class Game {
 
     //check for collision
     checkForCollision(inputObj){
-        let collision = false;
+        let errors = false;
+        let thisLeft = inputObj.xPos;
+        let thisRight = inputObj.xPos + (inputObj.width);
+        let thisTop = inputObj.yPos - (inputObj.height);
+        let thisBottom = inputObj.yPos;
+
+        //check if object going off screen
+        // if (thisLeft < 0)             errors.push("offLeft");
+        // if (thisRight >= this.width)  errors.push("offRight");
+        // if (thisBottom >= this.height)  errors.push("offBottom");
+        // if (thisTop < 0)  errors.push("offTop");
+
         this.frontObjs.forEach(obj => {
             //don't check for collision against self
             if (inputObj.id != obj.id)
             {
-                let thisLeft = inputObj.xPos;
-                let thisRight = inputObj.xPos + (inputObj.width);
-                let thisTop = inputObj.yPos - (inputObj.height);
-                let thisBottom = inputObj.yPos;
+
                 let otherLeft = obj.xPos;
                 let otherRight = obj.xPos + (obj.width);
                 let otherTop = obj.yPos- (obj.height);
@@ -139,14 +146,27 @@ class Game {
                 
                 //check for overlap of objects                  
                 if ((thisBottom >= otherTop) && (thisTop <= otherBottom) && (thisRight >= otherLeft) && (thisLeft <= otherRight)){
-                    collision = true;
-                    logger(`Collision obj1: ${inputObj.objectType} thisLeft ${thisLeft} thisRight ${thisRight} thisTop ${thisTop} thisBottom ${thisBottom}`,'checkForCollision','move');
-                    logger(`Collision obj2: ${obj.objectType} otherLeft ${otherLeft} otherRight ${otherRight} otherTop ${otherTop} otherBottom ${otherBottom}`,'checkForCollision','move');
-    
+                    errors = true;
+                    logger(`Collision obj1: ${inputObj.objectType} thisLeft ${thisLeft} thisRight ${thisRight} thisTop ${thisTop} thisBottom ${thisBottom}`,'checkForCollision','collision');
+                    logger(`Collision obj2: ${obj.objectType} otherLeft ${otherLeft} otherRight ${otherRight} otherTop ${otherTop} otherBottom ${otherBottom}`,'checkForCollision','collision');
+
+                    //conditions for hitting static object
+                    if (obj.objectType == "static"){
+
+                    //conditions for hitting moving object    
+                    }else{
+                        //mainc character hitting enemy
+                        if (inputObj.objectType = "mainChar" && obj.objectType == "enemy")
+                        {
+
+                        }
+
+
+                    }
                 }
             }
         });
-        return collision;
+        return errors;
     }
 
 }
@@ -193,6 +213,11 @@ class movingObject extends gameObject{
         this.moveYinc=aMovingObject.moveYinc;//default movement along y direction
         this.xDirection=aMovingObject.xDirection;  //-1 moves right to left, 1 moves left to right
         this.yDirection=aMovingObject.yDirection;  //-1 moves bottom to top, 1 moves top to bottom
+        this.jumpTimes=aMovingObject.jumpTimes;
+        this.jumpXRatio = aMovingObject.jumpXRatio;
+        this.jumpCounter=0;
+        this.jumpDirection="";
+        this.action="";
     }
 
     //generic function to move character and check for conflict
@@ -208,12 +233,50 @@ class movingObject extends gameObject{
             //userKeysPressed is an array of every key press, switch statement wouldn't work
             if (userKeysPressed["ArrowLeft"]){xValue = -1; }
             if (userKeysPressed["ArrowRight"]) {xValue = 1; }
-            if (userKeysPressed["ArrowUp"]) { yValue = -1; }
-            if (userKeysPressed["ArrowDown"]) {yValue= 1; }
+            if (userKeysPressed["ArrowUp"]) { yValue = 1; }
+            if (userKeysPressed["ArrowDown"]) {yValue= -1; }
 
-            //adjust for direction
-            xValue*=this.xDirection*this.moveXinc;
-            yValue*=this.yDirection*this.moveYinc;
+            //continuing jumping if that was started
+            if (this.action == "jumping"){
+                
+                if (this.jumpDirection == "angel"){
+                    xValue=this.xDirection*this.moveXinc*this.jumpXRatio;
+                    yValue=this.yDirection*this.moveYinc;
+                }else //jump straight up
+                    yValue=this.yDirection*this.moveYinc;
+                
+                this.jumpCounter++;
+                //console.log('still jimping ' + this.jumpCounter + ' ' +this.jumpTimes + ' ' + this.yDirection);
+                //switch jump direction on x if hit max height
+                if (this.jumpCounter == this.jumpTimes){
+                    this.yDirection = 1;
+                //reset jump after completed it
+                }else if (this.jumpCounter ==this.jumpTimes*2)
+                {
+                    this.yDirection = -1;
+                    this.action = "";
+                    this.jumpDirection="";
+                    this.jumpCounter=0;
+                }
+            //initiate jump action
+            }else if (yValue == 1){
+                //set action
+                this.action = "jumping"
+                this.yDirection=-1;
+                //set jump direction
+                if (xValue !=0){
+                    this.jumpDirection="angel";   
+                    console.log('angel')
+                }
+                else
+                    this.jumpDirection="straight";
+
+                //handle jump in next loop, so setting to zero for this one
+                yValue = 0;
+                xValue = 0;
+            }else{ //arrows controll direction
+                xValue*=this.xDirection*this.moveXinc;
+            }
 
         //otherwise object controlled by movement
         }else{
@@ -223,7 +286,7 @@ class movingObject extends gameObject{
         }
 
         if (xValue !=0 || yValue !=0){
-            logger(`${this.objectType} moving x:${xValue} y:${yValue}`,'moveCharacter','move');
+            //logger(`${this.objectType} moving x:${xValue} y:${yValue}`,'moveCharacter','move');
             this.moveCharacterHor(xValue);
             this.moveCharacterVer(yValue);
         }
@@ -238,7 +301,7 @@ class movingObject extends gameObject{
     //move vertical 
     moveCharacterVer(value){
         //console.log(`${this.yPos} - value ${value} = ${this.yPos-value}`)
-        this.yPos -= value;
+        this.yPos += value;
     }
 
 }

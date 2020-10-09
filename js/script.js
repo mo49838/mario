@@ -1,13 +1,17 @@
 console.log("javascript linked");
 
-//Global variable
-var myGame = "";
+let colorMode=false;
 
-function startGame(){
+function addGame(){
     //gameScreen takes width, height, refreshTime(ms), colorMode (true means ignore icons)
-    myGame = new Game(500,300,50,false); 
+    myGame = new Game(600,250,50,colorMode); 
+    //alert(colorMode);
     myGame.start();
 }
 
-startGame();
+function changeColorMode(){
+    //gameScreen takes width, height, refreshTime(ms), colorMode (true means ignore icons)
+    //alert('changed')
+    colorMode = true;
+}
 

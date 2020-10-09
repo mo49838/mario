@@ -11,8 +11,10 @@ const mainChars = [
         yPos: 0,  //starting position y
         xDirection: 1,   //go from right to left
         yDirection: -1,   //go from bottom to top
-        moveXinc: 5,  //speed
-        moveYinc: 1,  //speed
+        moveXinc: 4,  //speed
+        moveYinc: 10,  //speed
+        jumpTimes: 7,  //number of refreshes to continue jump
+        jumpXRatio: .8,  //ratio of x movement on angeled jump
     },
 ]
 const enemyChar = [
@@ -27,8 +29,10 @@ const enemyChar = [
         yPos: 0,  //starting position y
         xDirection: -1,   //go from left to right
         yDirection: -1,   //go from bottom to top
-        moveXinc: 5,  //speed
-        moveYinc: 1,  //speed
+        moveXinc: 3,  //speed
+        moveYinc: 3,  //speed
+        jumpTimes: 3,
+        jumpXRatio: .8,  //ratio of x movement on angeled jump
     },
 ]
 const objectChar = [
