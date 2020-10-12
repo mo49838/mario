@@ -1,13 +1,13 @@
 console.log("defining classes");
 //highest level object that has attributes for every object
 class Game {
-    constructor(width,height,refreshSpeed,colorMode=false)
+    constructor(width,height,refreshSpeed,inputColorMode=false)
     {
         //global variables for the class
         this.width = width;
         this.height = height;
         this.refreshSpeed = refreshSpeed;  //speed of refresh
-        this.colorMode=colorMode;  //true if use colors instead of graphics
+        this.inputColorMode=inputColorMode;  //true if use colors instead of graphics
         this.canvas = "";
         this.context = "";
         //this.mainChar = "";  //main character, always requiered in game (could be mario, luigi,..)
@@ -16,7 +16,7 @@ class Game {
         this.frameNo = 0; //track frame as mario goes through a level
         this.levelNo = 0;
         this.timesRun = 0;  //used to stop setInterval
-        this.stopTime = 300;  //number of times for interval to run
+        this.stopTime = 1000;  //number of times for interval to run
         this.keys = []; //track keys pressed
 
     }
@@ -49,36 +49,34 @@ class Game {
             this.keys[e.key] = (e.type == "keydown");
         }.bind(this));
 
-        //create main character and display it
-        // let mainChar= new movingObject(1,10, 30, "blue", 0, this.height-30, "mainChar",this.context);
         
+        //create main character and display it
         let mainChar = mainChars[0];
-        //remove color if not in color mode
-        console.log(this.colorMode+" mode")
-        if (!this.colorMode)
-            mainChar.color = "";
-        //update starting x position based on width of game
-        if (mainChar.xPos == "end")
+        //define dynamic character attributes depending on how the game arguments
+        mainChar.colorMode =this.inputColorMode
+        if (mainChar.xPos == "end") //update starting x position based on width of game
             mainChar.xPos = this.width;
-        //update y position 
-        mainChar.yPos = this.height-mainChar.height;
+        mainChar.yPos = this.height-mainChar.height-mainChar.yPos; //update y position (0 is at top, adjust for starting position)
         let mainObj= new movingObject(1,mainChar,this.context);
         this.frontObjs.push(mainObj);
-                            
+        
         //create enemy
-        let enemChar = enemyChar[0];
-        //update starting x position based on width of game
-        if (enemChar.xPos == "end")
-            enemChar.xPos = this.width;
-        //update y position 
-        enemChar.yPos = this.height-enemChar.height;
-        //remove color if not in color mode
-        if (!this.colorMode)
-            enemChar.color = "";
-
+        let enemChar = enemyChar[0];        
+        if (enemChar.xPos == "end")  ////update starting x position based on width of game
+            enemChar.xPos = this.width; 
+        enemChar.yPos = this.height-enemChar.height-enemChar.yPos; //update y position
+        enemChar.colorMode = this.inputColorMode;  //remove color if not in color mode
         let enemObj = new movingObject(2,enemChar,this.context);
         this.frontObjs.push(enemObj);
-        //this.updateScreen();
+
+        //add ground
+        let ground = staticChars[0];
+        ground.yPos = this.height-ground.height-ground.yPos;
+        let groundObj= new movingObject(3,ground,this.context);
+        ground.colorMode = this.inputColorMode; 
+        this.frontObjs.push(groundObj);
+
+        // this.updateScreen();
         //triggers the screen to update every x ms
         this.interval = setInterval(this.updateScreen.bind(this), this.refreshSpeed);
  
@@ -99,12 +97,13 @@ class Game {
             //clear screen
             this.clear();
 
-            //move all foreground elements second
-            //this.frontObjs.forEach(obj => {
+            //move all foreground elements 
             for (let i=0;i<this.frontObjs.length;i++)
             {
+                
                 //update character coordinates
                 let obj = this.frontObjs[i];
+                console.log(obj);
                 obj.moveCharacter(this.keys);
                 
                 obj.paintObject();
@@ -113,8 +112,7 @@ class Game {
                     console.log("Collision detected");
                     this.stopTime = 0;
                 }
-            }
-            //});   
+            } 
 
         }
 
@@ -191,8 +189,9 @@ class gameObject{
 
     paintObject(){
         
+        //console.log(this);
         //either use colors or graphics
-        if (this.color != ""){
+        if (this.image.src == "" || this.colorMode == true){
             logger(`about to paint: ${this.xPos} ${this.yPos}`,'paintObject','paint');
             this.context.fillStyle = this.color;
             this.context.fillRect(this.xPos, this.yPos, this.width, this.height);
@@ -279,7 +278,7 @@ class movingObject extends gameObject{
             }
 
         //otherwise object controlled by movement
-        }else{
+        }else if (this.objectType == "enemy"){
 
             xValue = this.moveXinc*this.xDirection;
             //yValue = this.moveYinc*this.yDirection;
