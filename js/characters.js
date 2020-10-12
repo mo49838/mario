@@ -18,7 +18,7 @@ const mainChars = [
         jumpXRatio: 1,  //ratio of x movement on angeled jump
     },
 ]
-const enemyChar = [
+const enemyChars = [
     {
         objectType:"enemy",
         name: "enemy1",
@@ -32,8 +32,8 @@ const enemyChar = [
         xDirection: -1,   //go from left to right
         yDirection: -1,   //go from bottom to top
         moveXinc: 3,  //speed
-        moveYinc: 3,  //speed
-        jumpTimes: 3,
+        moveYinc: 6,  //speed
+        jumpTimes: 7,
         jumpXRatio: 1,  //ratio of x movement on angeled jump
     },
 ]
@@ -41,9 +41,9 @@ const staticChars = [
     {
         objectType:"block",
         name: "solid",
-        width: 1000,
+        width: 200,
         height: 19,
-        color: "brown",
+        color: "green",
         colorMode: true,        
         image: "",
         xPos: 0,  //starting position x
@@ -59,12 +59,12 @@ const staticChars = [
         objectType:"block",
         name: "solid",
         width: 100,
-        height: 20,
-        color: "brown",
+        height: 5,
+        color: "green",
         colorMode: true,        
         image: "",
         xPos: 150,  //starting position x
-        yPos: 100,  //starting position y
+        yPos: 55,  //starting position y
         xDirection: 0,   //go from left to right
         yDirection: 0,   //go from bottom to top
         moveXinc: 0,  //speed

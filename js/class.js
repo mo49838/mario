@@ -15,9 +15,13 @@ class Game {
         this.frameNo = 0; //track frame as mario goes through a level
         this.levelNo = 0;
         this.timesRun = 0;  //used to stop setInterval
-        this.stopTime = 100;  //number of times for interval to run
+        this.stopTime = 1200;  //number of times for interval to run
         this.keys = []; //track keys pressed
         this.aGameBoard = new GameBoard(this.width,this.height);//tracks objects on board
+        this.points = 0;  //keep track of game points
+        this.winningFactor = .5;  //the amount main character has to be above enemy to win
+        this.frameNumber = 0;
+        this.objectCounter = 0;
 
     }
     
@@ -63,38 +67,38 @@ class Game {
         this.aGameBoard.clearObject(mainObj);
 
         //create enemy
-        let enemChar = enemyChar[0];        
-        if (enemChar.xPos == "end")  ////update starting x position based on width of game
-            enemChar.xPos = this.width; 
-        enemChar.yPos = this.height-enemChar.height-enemChar.yPos; //update y position
-        enemChar.colorMode = this.inputColorMode;  //remove color if not in color mode
-        let enemObj = new MovingObject(2,enemChar,this.context);
-        this.frontObjs.push(enemObj);
-        this.aGameBoard.placeObject(enemObj);
+        // let enemChar = enemyChars[0];        
+        // if (enemChar.xPos == "end")  ////update starting x position based on width of game
+        //     enemChar.xPos = this.width; 
+        // enemChar.yPos = this.height-enemChar.height-enemChar.yPos; //update y position
+        // enemChar.colorMode = this.inputColorMode;  //remove color if not in color mode
+        // let enemObj = new MovingObject(2,enemChar,this.context);
+        // this.frontObjs.push(enemObj);
+        // this.aGameBoard.placeObject(enemObj);
 
         // add ground
         let ground = staticChars[0];
         ground.yPos = this.height-ground.height-ground.yPos;
         if (ground.image != "")
             ground.colorMode = this.inputColorMode; 
-        let groundObj= new MovingObject(3,ground,this.context);
+        let groundObj= new MovingObject(2,ground,this.context);
         //console.log(groundObj)
         this.frontObjs.push(groundObj);
         this.aGameBoard.placeObject(groundObj);
 
-        let ground2 = staticChars[1];
-        ground2.yPos = this.height-ground2.height-ground2.yPos;
-        if (ground2.image != "")
-            ground2.colorMode = this.inputColorMode; 
-        let groundObj2= new MovingObject(4,ground2,this.context);
-        //console.log(groundObj)
-        this.frontObjs.push(groundObj2);
-        this.aGameBoard.placeObject(groundObj2);        
+        // let ground2 = staticChars[1];
+        // ground2.yPos = this.height-ground2.height-ground2.yPos;
+        // if (ground2.image != "")
+        //     ground2.colorMode = this.inputColorMode; 
+        // let groundObj2= new MovingObject(4,ground2,this.context);
+        // //console.log(groundObj)
+        // this.frontObjs.push(groundObj2);
+        // this.aGameBoard.placeObject(groundObj2);        
 
         // this.updateScreen();
         //triggers the screen to update every x ms
         this.interval = setInterval(this.updateScreen.bind(this), this.refreshSpeed);
- 
+        console.log(this.frontObjs);
 
     }
 
@@ -118,267 +122,278 @@ class Game {
                 
                 //get charcter
                 let obj = this.frontObjs[i];
-                let nextMove = {
-                    xValue: 0,
-                    yValue: 0
-                };
+
+                if (obj.objectType!= "deleted"){
+                    
+                    let nextMove = {
+                        xValue: 0,
+                        yValue: 0
+                    };
 
 
-                /**********************************************
-                   getting next coordinates for 
-                   moving objects
-                 **********************************************/
-                //console.log(this.keys);
-                //main character controlled by user actions
-                if (obj.objectType == "mainChar"){
-                    //continuing jumping if that was started
-                    if (obj.action == "jumping"){                        
-                        //set jump direction
-                        if (this.keys["ArrowLeft"])
-                            obj.xDirection=-1;
-                        else if (this.keys["ArrowRight"])
-                            obj.xDirection=1;
-        
-                        if (obj.jumpDirection == "angle"){
-                            nextMove.xValue=obj.xDirection*obj.moveXinc*obj.jumpXRatio;
-                            nextMove.yValue=obj.yDirection*obj.moveYinc;
-                        }else{ //jump straight up
+                    /**********************************************
+                     getting next coordinates for 
+                    moving objects
+                    **********************************************/
+                    //console.log(`starting update on `);
+                    //main character controlled by user actions
+                    if (obj.objectType == "mainChar"){
+                        //continuing jumping if that was started
+                        if (obj.action == "jumping"){                        
+                            //set jump direction
+                            if (this.keys["ArrowLeft"])
+                                obj.xDirection=-1;
+                            else if (this.keys["ArrowRight"])
+                                obj.xDirection=1;
+            
+                            if (obj.jumpDirection == "angle"){
+                                nextMove.xValue=obj.xDirection*obj.moveXinc*obj.jumpXRatio;
+                                nextMove.yValue=obj.yDirection*obj.moveYinc;
+                            }else{ //jump straight up
+                                nextMove.yValue=obj.yDirection*obj.moveYinc;
+
+                                //while falling can control directino
+                                if (this.keys["ArrowLeft"] && obj.jumpCounter > obj.jumpTimes){
+                                    obj.xDirection=-1;
+                                    nextMove.xValue=obj.xDirection*obj.moveXinc*obj.jumpXRatio;
+
+                                }
+                                else if (this.keys["ArrowRight"] && obj.jumpCounter > obj.jumpTimes){
+                                    obj.xDirection=1;
+                                    nextMove.xValue=obj.xDirection*obj.moveXinc*obj.jumpXRatio;
+                                }
+                            }
+                            obj.jumpCounter++;
+            
+                            //change direction once hit height
+                            if (obj.jumpCounter == obj.jumpTimes){
+                                obj.yDirection = 1;
+                            //reset object after jump complete
+                            }else if (obj.jumpCounter == obj.jumpTimes*2){
+                                obj.yDirection = -1;
+                                obj.action = "";
+                                obj.jumpDirection="";
+                                obj.jumpCounter=0;
+                            }
+                        //if off ground, move object down on (falling)
+                        }else if (this.aGameBoard.isInAir(obj)){
+                            // console.log('is in air')
+                            obj.yDirection=1;
                             nextMove.yValue=obj.yDirection*obj.moveYinc;
 
                             //while falling can control directino
-                            if (this.keys["ArrowLeft"] && obj.jumpCounter > obj.jumpTimes){
+                            if (this.keys["ArrowLeft"]){
+                                // console.log('arrow left')
                                 obj.xDirection=-1;
                                 nextMove.xValue=obj.xDirection*obj.moveXinc*obj.jumpXRatio;
-
                             }
-                            else if (this.keys["ArrowRight"] && obj.jumpCounter > obj.jumpTimes){
+                            else if (this.keys["ArrowRight"]){
+                                // console.log('arrow right')
                                 obj.xDirection=1;
                                 nextMove.xValue=obj.xDirection*obj.moveXinc*obj.jumpXRatio;
                             }
-                        }
-                        obj.jumpCounter++;
-        
-                        //change direction once hit height
-                        if (obj.jumpCounter == obj.jumpTimes){
-                            obj.yDirection = 1;
-                        //reset object after jump complete
-                        }else if (obj.jumpCounter == obj.jumpTimes*2){
-                            obj.yDirection = -1;
-                            obj.action = "";
-                            obj.jumpDirection="";
-                            obj.jumpCounter=0;
-                        }
-                    //if off ground, move object down on (falling)
-                    }else if (this.aGameBoard.isInAir(obj)){
-                        // console.log('is in air')
-                        obj.yDirection=1;
-                        nextMove.yValue=obj.yDirection*obj.moveYinc;
-
-                        //while falling can control directino
-                        if (this.keys["ArrowLeft"]){
-                            // console.log('arrow left')
-                            obj.xDirection=-1;
-                            nextMove.xValue=obj.xDirection*obj.moveXinc*obj.jumpXRatio;
-                        }
-                        else if (this.keys["ArrowRight"]){
-                            // console.log('arrow right')
-                            obj.xDirection=1;
-                            nextMove.xValue=obj.xDirection*obj.moveXinc*obj.jumpXRatio;
-                        }
-                    //initiate jump action if up arrow pushed
-                    }else if (this.keys["ArrowUp"]){
-                        //set action
-                        obj.action = "jumping"
-                        obj.yDirection=-1;
-                        //set jump direction
-                        if (this.keys["ArrowRight"] || this.keys["ArrowLeft"]){
-                            obj.jumpDirection="angle";   
-                        }
-                        else
-                            obj.jumpDirection="straight";
-        
-                    }else if (this.keys["ArrowRight"]){ //arrows controll direction
-                        obj.xDirection=1;
-                        nextMove.xValue=obj.xDirection*obj.moveXinc;
-                    }else if (this.keys["ArrowLeft"]){ //arrows controll direction
-                        obj.xDirection =-1;
-                        nextMove.xValue=obj.xDirection*obj.moveXinc;
-                    }
-        
-                //otherwise get enemy motion
-                }else if (obj.objectType == "enemy"){
-        
-                    if (this.aGameBoard.isInAir(obj)){
-                        obj.yDirection=1;
-                        nextMove.yValue=obj.yDirection*obj.moveYinc;
-                    }
-                    
-                    nextMove.xValue=obj.xDirection*obj.moveXinc;
-                    // console.log('moving enemy')
-                    //yValue = this.moveYinc*this.yDirection;
-                }
-                
-                /**********************************************
-                  check for conflict by incrementing through 
-                  move to x and y values, only if a move indicated
-                **********************************************/
-                let currXMove = 0;
-                let currYMove = 0;
-                if (nextMove.xValue != 0 || nextMove.yValue !=0){
-                    let conflictFound = false;
-                    //do move one step at a time checking for conflict
-                    let counter = 0;
-                    // console.log(`checking coordinates for ${obj.objectType} ${obj.xPos+nextMove.xValue} ${obj.yPos+nextMove.yValue}`);
-                    while ((currXMove != nextMove.xValue || currYMove != nextMove.yValue) && !conflictFound ){
-                        //track whether we moved left/right and up/down
-                        counter++;
-                        let xMove = 0;
-                        let yMove = 0;
-
-                        //increment currXMove
-                        if (currXMove < nextMove.xValue){
-                            xMove = 1;
-                            // currXMove++;
-                        }
-                        else if (currXMove > nextMove.xValue){
-                            xMove = -1; 
-                            // currXMove--;
-                        }
-                        
-                        //increment currYMove
-                        if (currYMove < nextMove.yValue){
-                            yMove = 1;
-                            // currYMove++;
-                        }
-                        else if (currYMove > nextMove.yValue){
-                            yMove = -1;
-                            // currYMove--;
-                        }
-
-                        //do conflict check based on movement
-                        let confResult = this.aGameBoard.isConflict(obj.id,obj.xPos+currXMove+xMove,obj.yPos+currYMove+yMove,obj.width,obj.height);
-                        //condition where objects goes off bottom of screen
-                        if (confResult == -4){
-
-                            if (obj.objectType == "mainChar")
-                            {
-                                alert("Fell off screen!");
-                                conflictFound = true;
-                                this.stopTime = 0;
-                                obj.objType = "deleted";
-                            }else{  //remove enemy
-                                this.aGameBoard.clearObject(obj);
-                                obj.objType = "deleted";
+                        //initiate jump action if up arrow pushed
+                        }else if (this.keys["ArrowUp"]){
+                            //set action
+                            obj.action = "jumping"
+                            obj.yDirection=-1;
+                            //set jump direction
+                            if (this.keys["ArrowRight"] || this.keys["ArrowLeft"]){
+                                obj.jumpDirection="angle";   
                             }
-                        //character tries to go off left side of screen
-                        }else if (confResult == -1 && obj.objectType == "mainChar") {
-                            currYMove+=yMove;
-                            conflictFound = true;
-                            this.aGameBoard.clearObject(obj);
-                        //other moving elements went off left/right side of screen
-                        }else if ((confResult == -1 || confResult == -2) && obj.objectType != "mainChar") {
-                            this.aGameBoard.clearObject(obj);
-                            obj.objType = "deleted";
-                            conflictFound = true;
-     
-                        //
-                        }else if (confResult !=0){
-
-                            console.log("conflict found with "+confResult);
-                            conflictFound = true;
-                        }else{
-                            currXMove+=xMove;
-                            currYMove+=yMove;
+                            else
+                                obj.jumpDirection="straight";
+            
+                        }else if (this.keys["ArrowRight"]){ //arrows controll direction
+                            obj.xDirection=1;
+                            nextMove.xValue=obj.xDirection*obj.moveXinc;
+                        }else if (this.keys["ArrowLeft"]){ //arrows controll direction
+                            obj.xDirection =-1;
+                            nextMove.xValue=obj.xDirection*obj.moveXinc;
+                        }
+            
+                    //otherwise get enemy motion
+                    }else if (obj.objectType == "enemy"){
+            
+                        if (this.aGameBoard.isInAir(obj)){
+                            obj.yDirection=1;
+                            nextMove.yValue=obj.yDirection*obj.moveYinc;
                         }
                         
-
+                        nextMove.xValue=obj.xDirection*obj.moveXinc;
+                        // console.log('moving enemy')
+                        //yValue = this.moveYinc*this.yDirection;
                     }
-               }
-
-                /**********************************************
-                  move object if x or y value not equal to zero
-                 **********************************************/
-                if (currXMove != 0 || currYMove !=0){
                     
-                    this.aGameBoard.clearObject(obj);
-                    obj.xPos+=currXMove;
-                    obj.yPos+=currYMove;
-                    this.aGameBoard.placeObject(obj);
-                    // console.log(obj);
-                }
-                
-                //add object back to array with updated values
-                this.frontObjs[i]=obj;
-                if (obj.objType != "deleted")
-                    obj.paintObject();
+                    /**********************************************
+                     check for conflict by incrementing through 
+                    move to x and y values, only if a move indicated
+                    **********************************************/
+                    let currXMove = 0;
+                    let currYMove = 0;
+                    if (nextMove.xValue != 0 || nextMove.yValue !=0){
+                        let conflictFound = false;
+                        let removeObject = false;
+                        //do move one step at a time checking for conflict
+                        let counter = 0;
+                        // console.log(`checking coordinates for ${obj.objectType} ${obj.xPos+nextMove.xValue} ${obj.yPos+nextMove.yValue}`);
+                        while ((currXMove != nextMove.xValue || currYMove != nextMove.yValue) && !conflictFound ){
+                            //track whether we moved left/right and up/down
+                            counter++;
+                            let xMove = 0;
+                            let yMove = 0;
 
-                //check for conflict
-                // if (this.checkForCollision(obj)){
-                //     console.log("Collision detected");
-                //     this.stopTime = 0;
-                // }
-            } 
+                            //increment currXMove
+                            if (currXMove < nextMove.xValue){
+                                xMove = 1;
+                                // currXMove++;
+                            }
+                            else if (currXMove > nextMove.xValue){
+                                xMove = -1; 
+                                // currXMove--;
+                            }
+                            
+                            //increment currYMove
+                            if (currYMove < nextMove.yValue){
+                                yMove = 1;
+                                // currYMove++;
+                            }
+                            else if (currYMove > nextMove.yValue){
+                                yMove = -1;
+                                // currYMove--;
+                            }
+
+                            //do conflict check based on movement
+                            let confResult = this.aGameBoard.isConflict(obj.id,obj.xPos+currXMove+xMove,obj.yPos+currYMove+yMove,obj.width,obj.height);
+                            console.log(confResult)
+                            //condition where objects goes off bottom of screen
+                            if (confResult == -4){
+
+                                //if main char goes off, then stop game
+                                if (obj.objectType == "mainChar")
+                                {
+                                    alert("Fell off screen!");
+                                    this.stopTime = 0;
+                                    conflictFound = true;
+                                }
+
+                                removeObject = true;
+
+                            //character tries to go off left side of screen
+                            }else if (confResult == -1 && obj.objectType == "mainChar") {
+                                currYMove+=yMove;
+                                conflictFound = true;
+                                // this.aGameBoard.clearObject(obj);
+                            //other moving elements went off left/right side of screen
+                            }else if ((confResult == -1 || confResult == -2) && obj.objectType != "mainChar") {
+                                removeObject = true;
+                            //see what type of objects collided to determine result
+                            }else if (confResult !=0){
+                                //id of the object -1 is the place in the array
+                                let otherObj = this.frontObjs[confResult-1];
+
+                                // console.log(otherObj);
+                                let thisType = obj.objectType;
+                                let otherType = otherObj.objectType;
+
+                                //console.log("this type " + thisType + " other type " + otherType)
+                                //first two conditions main character jump on enemy 
+                                if (thisType == "mainChar" && otherType == "enemy"){
+                                    //mainCharacter wins
+                                    console.log(`first ${obj.yPos+obj.height} ${otherObj.yPos+(this.winningFactor*otherObj.height)}`)
+                                    if (obj.yPos+obj.height < otherObj.yPos+(this.winningFactor*otherObj.height))
+                                    {
+                                        console.log("enemy lost " +this.frontObjs[confResult-1].objectType);
+                                        //remove enemy from board
+                                        this.frontObjs[confResult-1].objectType = "deleted";
+                                        this.aGameBoard.clearObject(this.frontObjs[confResult-1]);
+                                        console.log(this.frontObjs[confResult-1].objectType);
+
+                                        //keep main char moving
+                                        currXMove+=xMove;
+                                        currYMove+=yMove;
+                                    //else main character looses
+                                    }else{
+                                        alert("Enemy got you!" + (obj.yPos+obj.height < otherObj.yPos+(this.winningFactor*otherObj.height)));
+                                        this.stopTime = 0;
+                                        removeObject = true;
+                                        conflictFound = true;
+                                    }
+
+                                } else if (thisType == "enemy" && otherType == "mainChar"){
+                                    console.log(`second ${obj.yPos+(obj.height*this.winningFactor)} ${otherObj.yPos+otherObj.height}`)
+                                    if (obj.yPos+(obj.height*this.winningFactor) > otherObj.yPos+otherObj.height)
+                                    {
+                                        console.log("enemy lost")
+                                        removeObject = true;
+
+                                    //else main character looses
+                                    }else{
+                                        alert("Enemy got you!");
+                                        this.stopTime = 0;
+                                        removeObject = true;
+                                        conflictFound = true;
+                                    }
+                                //next one handles hitting a block
+                                }if (thisType == "mainChar" && otherType == "block"){
+                                    //FUTURE ENHANCEMENT TO CLEAN UP mainChar and block interaction
+                                    // if (obj.yPos+obj.height > otherObj.yPos){
+                                    //     //only move x
+                                    //     currXMove+=xMove;
+                                    //     //reset action in case of jump
+                                    //     this.frontObjs[i].action = "";
+                                    // }
+
+                                }
+
+
+
+                                console.log("conflict found with "+confResult);
+                                conflictFound = true;
+                            }else{
+                                currXMove+=xMove;
+                                currYMove+=yMove;
+                            }
+
+                            if (removeObject){
+                                obj.objType = "deleted";
+                                this.aGameBoard.clearObject(obj);
+                            }
+                            
+
+                        }
+                }
+
+                    /**********************************************
+                     move object if x or y value not equal to zero
+                    **********************************************/
+                    if (currXMove != 0 || currYMove !=0){
+                        
+                        this.aGameBoard.clearObject(obj);
+                        obj.xPos+=currXMove;
+                        obj.yPos+=currYMove;
+                        this.aGameBoard.placeObject(obj);
+                        // console.log(obj);
+                    }
+                    
+                    //add object back to array with updated values
+                    this.frontObjs[i]=obj;
+                    if (obj.objType != "deleted")
+                        obj.paintObject();
+
+                    //check for conflict
+                    // if (this.checkForCollision(obj)){
+                    //     console.log("Collision detected");
+                    //     this.stopTime = 0;
+                    // }
+                } 
+
+            }
 
         }
 
     }
 
-//     //check for collision
-//     checkForCollision(inputObj){
-//         let errors = false;
-//         let thisLeft = inputObj.xPos;
-//         let thisRight = inputObj.xPos + (inputObj.width);
-//         let thisTop = inputObj.yPos - (inputObj.height);
-//         let thisBottom = inputObj.yPos;
-
-//         //check if object going off screen
-//         // if (thisLeft < 0)             errors.push("offLeft");
-//         // if (thisRight >= this.width)  errors.push("offRight");
-//         // if (thisBottom >= this.height)  errors.push("offBottom");
-//         // if (thisTop < 0)  errors.push("offTop");
-
-//         this.frontObjs.forEach(obj => {
-
-//             //main character uses keyboard input, other moving objects do not
-
-
-
-
-//             // if (obj.objectType == "mainChar")
-// /*      changing logic to use gameBoard for determining colission  
-//             //don't check for collision against self
-//             if (inputObj.id != obj.id)
-//             {         
-//                 let otherLeft = obj.xPos;
-//                 let otherRight = obj.xPos + (obj.width);
-//                 let otherTop = obj.yPos- (obj.height);
-//                 let otherBottom = obj.yPos;
-                
-//                 //check for overlap of objects                  
-//                 if ((thisBottom >= otherTop) && (thisTop <= otherBottom) && (thisRight >= otherLeft) && (thisLeft <= otherRight)){
-//                     errors = true;
-//                     logger(`Collision obj1: ${inputObj.objectType} thisLeft ${thisLeft} thisRight ${thisRight} thisTop ${thisTop} thisBottom ${thisBottom}`,'checkForCollision','collision');
-//                     logger(`Collision obj2: ${obj.objectType} otherLeft ${otherLeft} otherRight ${otherRight} otherTop ${otherTop} otherBottom ${otherBottom}`,'checkForCollision','collision');
-
-//                     //conditions for hitting static object
-//                     if (obj.objectType == "static"){
-
-//                     //conditions for hitting moving object    
-//                     }else{
-//                         //mainc character hitting enemy
-//                         if (inputObj.objectType = "mainChar" && obj.objectType == "enemy")
-//                         {
-
-//                         }
-
-
-//                     }
-//                 }
-//             }
-// */
-//         });  //end this.frontObjs.forEach(obj => 
-//         return errors;
-//     }
 
 }
 
