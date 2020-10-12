@@ -10,7 +10,6 @@ class Game {
         this.inputColorMode=inputColorMode;  //true if use colors instead of graphics
         this.canvas = "";
         this.context = "";
-        //this.mainChar = "";  //main character, always requiered in game (could be mario, luigi,..)
         this.frontObjs = []; //foreground objects that moving objects can have collision with
         this.backObjs = [];  //background objects that moving objects won't collide with
         this.frameNo = 0; //track frame as mario goes through a level
@@ -18,6 +17,7 @@ class Game {
         this.timesRun = 0;  //used to stop setInterval
         this.stopTime = 1000;  //number of times for interval to run
         this.keys = []; //track keys pressed
+        this.aGameBoard = new gameBoard(this.width,this.height);//tracks objects on board
 
     }
     
@@ -59,7 +59,12 @@ class Game {
         mainChar.yPos = this.height-mainChar.height-mainChar.yPos; //update y position (0 is at top, adjust for starting position)
         let mainObj= new movingObject(1,mainChar,this.context);
         this.frontObjs.push(mainObj);
-        
+        console.log(this.aGameBoard.board[2][210]);
+        this.aGameBoard.placeObject(mainObj);
+
+        console.log(this.aGameBoard.board[2][210]);
+        this.aGameBoard.clearObject(mainObj);
+        console.log(this.aGameBoard.board[2][210]);
         //create enemy
         let enemChar = enemyChar[0];        
         if (enemChar.xPos == "end")  ////update starting x position based on width of game
@@ -78,7 +83,7 @@ class Game {
 
         // this.updateScreen();
         //triggers the screen to update every x ms
-        this.interval = setInterval(this.updateScreen.bind(this), this.refreshSpeed);
+        // this.interval = setInterval(this.updateScreen.bind(this), this.refreshSpeed);
  
 
     }
@@ -169,6 +174,48 @@ class Game {
 
 }
 
+//used to track objects on board so can more easily determine conflict
+class gameBoard{
+    constructor(boardWidth, boardHeight){
+        this.boardWidth=boardWidth;
+        this.boardHeight=boardHeight;
+        this.board = []; //two dimensional array for track game objects
+        // this.board = new Array(boardWidth,boardHeight); //two dimensional array for track game objects
+        //initialize to 0 for no object being there
+        for (let i=0;i<this.boardWidth;i++){
+             this.board.push([0]);
+            for (let j=0;j<this.boardWidth;j++){
+                this.board[i][j]=0;
+            }
+        }
+    }
+
+    //clears object from board
+    clearObject(obj){
+        for (let i=obj.xPos;i<obj.xPos+obj.width;i++){
+            // for (let j=obj.yPos;j > obj.yPos - obj.height;j--){
+            for (let j=obj.yPos;j < obj.yPos + obj.height;j++){
+               this.board[i][j]=0;
+            //    console.log(i + " " + j + " set to 0");
+           }
+       }
+    }
+
+    //place object on board
+    placeObject(obj){
+        for (let i=obj.xPos;i<obj.xPos+obj.width;i++){
+            for (let j=obj.yPos;j < obj.yPos + obj.height;j++){
+                this.board[i][j]=1;
+                // console.log(i + " " + j + " set to 1");
+            }
+        }
+    }
+
+    isConflict(){
+        //need to define
+        return 0;
+    }
+}
 //Parent class of all objects that appear in screen
 class gameObject{
     // constructor(id,width, height, color,image, startX, startY, objectType, context,colorMode){
