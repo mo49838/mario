@@ -58,7 +58,7 @@ const staticChars = [
     {
         objectType:"block",
         name: "solid",
-        width: 100,
+        width: 500,
         height: 5,
         color: "green",
         colorMode: true,        
