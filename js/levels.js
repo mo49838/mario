@@ -7,15 +7,53 @@ const level =
                 {
                     frame:0,
                     objClass:"movingObject",
-                    constName:"enemyChars",
+                    constName:"staticChars",
                     constIndx:0, //first element of enemy
                 },
                 {
-                    frame:0,
+                    frame:1,
+                    objClass:"movingObject",
+                    constName:"enemyChars",
+                    constIndx:0, //first element of enemy
+                },
+                //start pyramid
+                {
+                    frame:700,
                     objClass:"movingObject",
                     constName:"staticChars",
-                    constIndx:1, //first element of enemy
+                    constIndx:9,   //shortVerticle
                 },
+                {
+                    frame:730,
+                    objClass:"movingObject",
+                    constName:"staticChars",
+                    constIndx:10, //middleVerticle
+                },
+                {
+                    frame:750,
+                    objClass:"movingObject",
+                    constName:"staticChars",
+                    constIndx:11, //middleVerticle
+                },
+                {
+                    frame:770,
+                    objClass:"movingObject",
+                    constName:"staticChars",
+                    constIndx:11, //middleVerticle
+                },
+                {
+                    frame:790,
+                    objClass:"movingObject",
+                    constName:"staticChars",
+                    constIndx:10, //middleVerticle
+                },
+                {
+                    frame:810,
+                    objClass:"movingObject",
+                    constName:"staticChars",
+                    constIndx:9,   //shortVerticle
+                },
+                //end pyramid
             ]
         }
     ];

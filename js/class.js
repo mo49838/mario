@@ -19,8 +19,12 @@ class Game {
         this.aGameBoard = new GameBoard(this.width,this.height);//tracks objects on board
         this.points = 0;  //keep track of game points
         this.winningFactor = .5;  //the amount main character has to be above enemy to win
-        this.frameNumber = 0;
-        this.objectCounter = 0;
+        this.frameNumber = width;
+        this.objectCounter = 1;
+        this.lvlArray = [];  //contains level objects to be added
+        this.lvlArrayInd = 0;  //keep track of objects that should be added
+        this.lives=0;
+        this.mainCharDied = false;
 
     }
     
@@ -65,34 +69,37 @@ class Game {
         this.aGameBoard.placeObject(mainObj);
         this.aGameBoard.clearObject(mainObj);
 
-        //create enemy
-        let enemChar = enemyChars[0];        
-        if (enemChar.xPos == "end")  ////update starting x position based on width of game
-            enemChar.xPos = this.width; 
-        enemChar.yPos = this.height-enemChar.height-enemChar.yPos; //update y position
-        enemChar.colorMode = this.inputColorMode;  //remove color if not in color mode
-        let enemObj = new MovingObject(2,enemChar,this.context);
-        this.frontObjs.push(enemObj);
-        this.aGameBoard.placeObject(enemObj);
+        //set level
+        this.lvlArray = level[0].lvlObjects;  //contains level objects to be added
+        // console.log(this.lvlArray);
+        // //create enemy
+        // let enemChar = enemyChars[0];        
+        // if (enemChar.xPos == "end")  ////update starting x position based on width of game
+        //     enemChar.xPos = this.width; 
+        // enemChar.yPos = this.height-enemChar.height-enemChar.yPos; //update y position
+        // enemChar.colorMode = this.inputColorMode;  //remove color if not in color mode
+        // let enemObj = new MovingObject(2,enemChar,this.context);
+        // this.frontObjs.push(enemObj);
+        // this.aGameBoard.placeObject(enemObj);
 
-        // add ground
-        let ground = staticChars[0];
-        ground.yPos = this.height-ground.height-ground.yPos;
-        if (ground.image != "")
-            ground.colorMode = this.inputColorMode; 
-        let groundObj= new MovingObject(3,ground,this.context);
-        //console.log(groundObj)
-        this.frontObjs.push(groundObj);
-        this.aGameBoard.placeObject(groundObj);
+        // // add ground
+        // let ground = staticChars[0];
+        // ground.yPos = this.height-ground.height-ground.yPos;
+        // if (ground.image != "")
+        //     ground.colorMode = this.inputColorMode; 
+        // let groundObj= new MovingObject(3,ground,this.context);
+        // //console.log(groundObj)
+        // this.frontObjs.push(groundObj);
+        // this.aGameBoard.placeObject(groundObj);
 
-        let ground2 = staticChars[1];
-        ground2.yPos = this.height-ground2.height-ground2.yPos;
-        if (ground2.image != "")
-            ground2.colorMode = this.inputColorMode; 
-        let groundObj2= new MovingObject(4,ground2,this.context);
-        //console.log(groundObj)
-        this.frontObjs.push(groundObj2);
-        this.aGameBoard.placeObject(groundObj2);        
+        // let ground2 = staticChars[1];
+        // ground2.yPos = this.height-ground2.height-ground2.yPos;
+        // if (ground2.image != "")
+        //     ground2.colorMode = this.inputColorMode; 
+        // let groundObj2= new MovingObject(4,ground2,this.context);
+        // //console.log(groundObj)
+        // this.frontObjs.push(groundObj2);
+        // this.aGameBoard.placeObject(groundObj2);        
 
         // this.updateScreen();
         //triggers the screen to update every x ms
@@ -111,10 +118,62 @@ class Game {
         this.frameNumber++;
         //only run x times
         if(this.timesRun > this.stopTime){
+            if (this.mainCharDied){
+                // this.clear();
+                this.context.fillStyle="red";
+                this.context.font = "30px Arial";
+                this.context.fillText("You lost, it happens... try again!", 75, 150);
+            }else{
+                this.context.fillStyle="green";
+                this.context.font = "30px Arial";
+                this.context.fillText("Winner!", 100, 150);
+            }
             clearInterval(this.interval);
         }else{
+
             //clear screen
             this.clear();
+
+            //check for new objects that should be added
+            while(this.lvlArrayInd < this.lvlArray.length && this.lvlArray[this.lvlArrayInd].frame < this.frameNumber){
+                this.objectCounter++;
+                //in future add other class of objects 
+                // console.log(this.lvlArray[this.lvlArrayInd])
+                if(this.lvlArray[this.lvlArrayInd].objClass == "movingObject")
+                {
+
+                    let newObj = "";
+                    // console.log(this.lvlArray[this.lvlArrayInd].constIndx);
+                    if (this.lvlArray[this.lvlArrayInd].constName== "enemyChars")
+                        newObj = enemyChars[this.lvlArray[this.lvlArrayInd].constIndx];    
+                    else if (this.lvlArray[this.lvlArrayInd].constName== "staticChars")
+                        newObj = staticChars[this.lvlArray[this.lvlArrayInd].constIndx]; 
+
+                    if (newObj == "")
+                        console.log(`Object to add not found: ${this.lvlArrayInd} ${this.lvlArray[this.lvlArrayInd].constName} ${this.lvlArray[this.lvlArrayInd].constIndx}`)
+                    else{
+                        //all objects to start at position 0 when in frame 0
+                        if (this.lvlArray[this.lvlArrayInd].frame == 0)
+                        {
+                            newObj.xPos=0;
+                            console.log("set x to zero");
+                        }
+
+                        if (newObj.xPos == "end")  ////update starting x position based on width of game
+                            newObj.xPos = this.width; 
+                        newObj.yPos = this.height-newObj.height-newObj.yPos; //update y position
+                        if (newObj.image != "")
+                            newObj.colorMode = this.inputColorMode;  //remove color if not in color mode
+                        let newMovingObj = new MovingObject(this.objectCounter,newObj,this.context);
+                        newMovingObj.paintObject();
+                        this.frontObjs.push(newMovingObj);
+                        this.aGameBoard.placeObject(newMovingObj);
+                        console.log(newObj);
+                    }
+                }
+                this.lvlArrayInd++;
+            }
+
             if (this.timesRun%1000==0)
                 console.log(`${this.timesRun}`);
             //move all foreground elements 
@@ -280,6 +339,7 @@ class Game {
                                     obj.yPos+=currYMove+8;
                                     obj.paintObject();
                                     console.log("Fell off screen!");
+                                    this.mainCharDied=true;
                                 }
 
                                 removeObject = true;
@@ -323,6 +383,7 @@ class Game {
                                         this.stopTime = 0;
                                         removeObject = true;
                                         conflictFound = true;
+                                        this.mainCharDied=true;
                                     }
 
                                 } else if (thisType == "enemy" && otherType == "mainChar"){
@@ -338,6 +399,7 @@ class Game {
                                         this.stopTime = 0;
                                         removeObject = true;
                                         conflictFound = true;
+                                        this.mainCharDied=true;
                                     }
                                 //next one handles hitting a block
                                 }if (thisType == "mainChar" && otherType == "block"){
@@ -350,8 +412,6 @@ class Game {
                                     // }
 
                                 }
-
-
 
                                 console.log("conflict found with "+confResult);
                                 conflictFound = true;
@@ -379,6 +439,7 @@ class Game {
                         //move screen instead of player
                         if (obj.objectType == "mainChar" && currXMove > 0 && obj.xPos > this.width*.4){
                             this.clear();
+                            this.frameNumber+=currXMove;
                             for (let m=0;m<this.frontObjs.length;m++){
                                 let objToIter = this.frontObjs[m];
                                 if (objToIter.objectType!="mainChar" && objToIter.objectType!="deleted" )
