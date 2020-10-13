@@ -2,6 +2,44 @@ body{
     background-color: #355e3b;
 }
 
+h1{
+    color: #ffffff;
+    font-family: 'Sansita Swashed', cursive;
+    text-align: center;
+    font-size: 46px;
+}
+.gameBoards, .controlls{
+    display: flex;
+    justify-content: center;
+    margin: 20px auto;
+}
+
+button{
+    color: #000000;
+    transition-duration: 0.4s;
+    border-radius: 10px;
+    width: 200px;
+    height: 50px;
+    font-size: 20px;
+}
+button:hover {
+    background-color: #4CAF50; /* Green */
+    color: white;
+  }
+.gameBoards{
+    width: 700px;
+    flex-wrap: wrap;
+    align-content: space-around;
+}
+
+.controlls{
+    /*(height: 20vh;*/
+}
+
+.board{
+    /*border: 2px black solid;*/
+}
+
 canvas {
     border:1px solid #d3d3d3;
     background-color: #f1f1f1;

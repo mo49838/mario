@@ -22,13 +22,13 @@ const enemyChars = [
     {
         objectType:"enemy",
         name: "enemy1",
-        width: 20,
+        width: 30,
         height: 30,
         color: "red",
-        image: "images/happy.png",
+        image: "images/red_unhappy.png",
         colorMode: false,        
-        xPos: 160,  //starting position x
-        yPos: 120,  //starting position y
+        xPos: 500,  //starting position x
+        yPos: 30,  //starting position y
         xDirection: -1,   //go from left to right
         yDirection: -1,   //go from bottom to top
         moveXinc: 3,  //speed
@@ -42,10 +42,27 @@ const enemyChars = [
         width: 30,
         height: 30,
         color: "red",
-        image: "images/happy.png",
+        image: "images/red_unhappy2.jpeg",
         colorMode: false,        
         xPos: "end",  //starting position x
-        yPos: 200,  //starting position y
+        yPos: 40,  //starting position y
+        xDirection: -1,   //go from left to right
+        yDirection: -1,   //go from bottom to top
+        moveXinc: 3,  //speed
+        moveYinc: 6,  //speed
+        jumpTimes: 7,
+        jumpXRatio: 1,  //ratio of x movement on angeled jump
+    },
+    {
+        objectType:"enemy",
+        name: "enemy3",
+        width: 60,
+        height: 60,
+        color: "red",
+        image: "images/red_unhappy.png",
+        colorMode: false,        
+        xPos: "end",  //starting position x
+        yPos: 30,  //starting position y
         xDirection: -1,   //go from left to right
         yDirection: -1,   //go from bottom to top
         moveXinc: 3,  //speed
@@ -58,7 +75,7 @@ const staticChars = [
     {
         objectType:"block",
         name: "horLongBottom",
-        width: 1000,
+        width: 600,
         height: 20,
         color: "green",
         colorMode: true,        
@@ -75,7 +92,7 @@ const staticChars = [
     {
         objectType:"block",
         name: "horMediumBottom",
-        width: 500,
+        width: 300,
         height: 20,
         color: "green",
         colorMode: true,        
@@ -109,7 +126,7 @@ const staticChars = [
     {
         objectType:"block",
         name: "horLongMiddle",
-        width: 1000,
+        width: 600,
         height: 10,
         color: "green",
         colorMode: true,        
@@ -126,7 +143,7 @@ const staticChars = [
     {
         objectType:"block",
         name: "horMediumMiddle",
-        width: 500,
+        width: 300,
         height: 10,
         color: "green",
         colorMode: true,        
@@ -160,7 +177,7 @@ const staticChars = [
     {
         objectType:"block",
         name: "topLongMiddle",
-        width: 1000,
+        width: 600,
         height: 10,
         color: "green",
         colorMode: true,        
@@ -177,7 +194,7 @@ const staticChars = [
     {
         objectType:"block",
         name: "topMediumMiddle",
-        width: 500,
+        width: 300,
         height: 10,
         color: "green",
         colorMode: true,        
@@ -354,6 +371,23 @@ const staticChars = [
         image: "",
         xPos: "end",  //starting position x
         yPos: 90,  //starting position y
+        xDirection: 0,   //go from left to right
+        yDirection: 0,   //go from bottom to top
+        moveXinc: 0,  //speed
+        moveYinc: 0,  //speed
+        jumpTimes: 0,
+        jumpXRatio: 0,
+    },
+    {
+        objectType:"block",
+        name: "finishFlag",
+        width: 60,
+        height: 60,
+        color: "green",
+        colorMode: true,        
+        image: "images/finish_flag.png",
+        xPos: "end",  //starting position x
+        yPos: 100,  //starting position y
         xDirection: 0,   //go from left to right
         yDirection: 0,   //go from bottom to top
         moveXinc: 0,  //speed

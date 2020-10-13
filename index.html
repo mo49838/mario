@@ -3,15 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mark's Mario Marvel</title>
+    <title>Mark's Mock Mario Marvel</title>
     <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sansita+Swashed:wght@300&display=swap" rel="stylesheet">
 </head>
-    <!-- Note: game area created in javascript-->
-    <button onclick="addGame()">Add Game(s)</button>
-    <button onclick="changeColorMode()">Change to Color Mode</button>
-    <br>
-    <br>
 <body>
+    <h1>Mark's Mock Mario Marvel</h1>
+    <br>
+    <nav class="controlls">
+        <button class="button" id="colorMode" onclick="changeColorMode()">Color Mode Off</button>
+        <button class="button" onclick="addGame()">Add Game(s)</button>
+    </nav>
+    <div class="gameBoards">
+        <!--add boards from javascript-->
+    </div>
     <script src="js/logger.js"></script>
     <script src="js/characters.js"></script>
     <script src="js/levels.js"></script>
