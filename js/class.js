@@ -26,6 +26,7 @@ class Game {
         this.lvlArrayInd = 0;  //keep track of objects that should be added
         this.lives=0;
         this.mainCharDied = false;
+        this.keyPress = false;
 
     }
     
@@ -54,6 +55,7 @@ class Game {
             this.keys = (this.keys || []);
             this.keys[e.key] = (e.type == "keydown");
             logger(`keys pressed ${this.keys}`, 'addEventListener', 'listener');
+            this.keyPress = true;
         }.bind(this));
         window.addEventListener('keyup', function (e) {
             this.keys[e.key] = (e.type == "keydown");
@@ -72,6 +74,28 @@ class Game {
         this.aGameBoard.placeObject(mainObj);
         this.aGameBoard.clearObject(mainObj);
 
+        //display instructions
+        // this.context.fillStyle="blue";
+        // this.context.font = "20px Arial";
+        // this.context.fillText("Do's:", 30, 100);
+        // this.context.font = "15px Arial";
+        // this.context.fillText("-Use arrow keys to control movement", 75, 150);
+        // this.context.fillText("-Jump on unfriendlys", 95, 150);
+        // this.context.font = "20px Arial";
+        // this.context.fillText("Dont's:", 130, 100);
+        // this.context.font = "15px Arial";
+        // this.context.fillText("-Drop into holes", 130, 150);
+        // this.context.fillText("-Touch unfriendlys from front or back", 150, 150);
+
+        // //hack at forcing refresh of page before alert
+        
+        // var disp = newBoard.style.display;
+        // newBoard.style.display = 'none';
+        // var trick = newBoard.offsetHeight;
+        // newBoard.style.display = disp;
+        // alert('Press Ok when you are ready to start...')
+
+        console.log(this.keys.length + " "+ this.keys["Enter"]== false);
         //set level info
         this.frameTotal = level[0].frames;
         this.lvlArray = level[0].lvlObjects;  //contains level objects to be added
@@ -81,6 +105,10 @@ class Game {
         this.interval = setInterval(this.updateScreen.bind(this), this.refreshSpeed);
         // console.log(this.frontObjs);
 
+    }
+
+    sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     clear(){

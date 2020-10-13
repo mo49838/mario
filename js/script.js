@@ -20,8 +20,9 @@ function changeColorMode(){
     }else{
         colorMode = false;
         colorModeBt.innerText = "Color Mode Off";
-        colorModeBt.style.backgroundColor ="#ffffff";
+        colorModeBt.removeAttribute("style");
     }
     
 }
+
 
