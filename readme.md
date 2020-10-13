@@ -6,7 +6,7 @@ This project involves creating a game that meets the following requirements:
 * Be deployed online, using Github Project pages and/or to a custom domain.
 * Use semantic markup for HTML and CSS (adhere to best practices)
 * Show a good commit history with frequent commits
-<br/>
+<br>
 My project was focused on creating a knock off of the Mario game.  Since this game was created 
 in 3 days of class, it is a very generic game using smiley faces instead of actual characters. 
 The customization of initial characters is complete, additional levels/charcters/objects can be added through configuratoin of arrays.  The problem this project solves is boredom, Mario is addictive in any form.
