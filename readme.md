@@ -1,6 +1,11 @@
 # Description
 This project involves creating a game that meets the following requirements:
-
+* Render in the browser
+* Include separate HTML / CSS / JavaScript files
+* Use Javascript for DOM manipulation
+* Be deployed online, using Github Project pages and/or to a custom domain.
+* Use semantic markup for HTML and CSS (adhere to best practices)
+* Show a good commit history with frequent commits
 # Brief Example
 This could be a code snippet showing how your project should be used (if it is meant to be integrated into another app)
 This could be a screenshot of your project running in the browser (if it is a stand-alone application)
