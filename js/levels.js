@@ -104,5 +104,53 @@ const level =
                     constIndx:18,   //finish flag
                 },                
             ]
-        }
+        },
+        {
+            level: 1,
+            frames: 2000,
+            lvlObjects:[
+                {
+                    frame:0,
+                    objClass:"movingObject",
+                    constName:"staticChars",
+                    constIndx:0, //first element of enemy
+                },         
+                {
+                    frame:10,
+                    objClass:"movingObject",
+                    constName:"enemyChars",
+                    constIndx:1, //second enemy
+                },
+                {
+                    frame:15,
+                    objClass:"movingObject",
+                    constName:"enemyChars",
+                    constIndx:1, //second enemy
+                },                
+                {
+                    frame:640,
+                    objClass:"movingObject",
+                    constName:"staticChars",
+                    constIndx:4,   //horMediumBottom
+                },    
+                {
+                    frame:800,
+                    objClass:"movingObject",
+                    constName:"staticChars",
+                    constIndx:12,   //horMediumBottom
+                },  
+                {
+                    frame:1060,
+                    objClass:"movingObject",
+                    constName:"staticChars",
+                    constIndx:12,   //horMediumBottom
+                },     
+                {
+                    frame:1060,
+                    objClass:"movingObject",
+                    constName:"enemyChars",
+                    constIndx:3, //second enemy
+                },         
+            ]
+        },
     ];

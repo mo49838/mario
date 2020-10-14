@@ -70,6 +70,23 @@ const enemyChars = [
         jumpTimes: 7,
         jumpXRatio: 1,  //ratio of x movement on angeled jump
     },
+    {
+        objectType:"enemy",
+        name: "enemy4",
+        width: 30,
+        height: 30,
+        color: "red",
+        image: "images/red_unhappy.png",
+        colorMode: false,        
+        xPos: "end",  //starting position x
+        yPos: 99,  //starting position y
+        xDirection: -1,   //go from left to right
+        yDirection: -1,   //go from bottom to top
+        moveXinc: 3,  //speed
+        moveYinc: 6,  //speed
+        jumpTimes: 7,
+        jumpXRatio: 1,  //ratio of x movement on angeled jump
+    },
 ]
 const staticChars = [
     {
