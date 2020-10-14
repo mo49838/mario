@@ -58,6 +58,10 @@ The customization of initial characters is complete, additional levels/charcters
 # List of Technologies Used
 * HTML5/CSS3/javascript ES6
 * Note: canvas is the work horse for displaying the board and painting the objects
+* Overview of objects:
+<div align="center">
+  <img src="https://github.com/mo49838/mario/blob/main/documentation/objecst.png"></img>
+</div>
 
 # Installation Instructions / Getting Started
 1. Install modern web broswer (Chrome/Edge/Safari/...)
