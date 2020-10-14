@@ -51,10 +51,14 @@ The customization of initial characters is complete, additional levels/charcters
 - [ ] Add background that moves with the screen
 - [ ] Add graphics for blocks (currenlty fill color)
 
+# Known issues
+* When launching multiple games, objects on the second game disappear or are not in right position.  My impression is that even though I am instatiating different instances of the class Game, the memory is overlapping.  
+* When an emeny falls off the bottom of the screen, logging shows that the array of frontObjects has it flagged deleted.  But after the setinterval timer kicks in again, the frontObjects doesn't show it deleted.  Assuming relating to first issue.
+
 # List of Technologies Used
 * HTML5/css/javascript
-Languages, frameworks, and libraries your app is composed of
-This is particularly important when it comes to recruiters scanning your projects for keywords
+* Note: canvas is the work horse for displaying the board and painting the objects
+
 # Installation Instructions / Getting Started
 1. Install modern web broswer (Chrome/Edge/Safari/...)
 1. Download this repos files
@@ -64,5 +68,6 @@ This is particularly important when it comes to recruiters scanning your project
 # Contribution Guidelines
 This section should offer guidance on where and how users can contribute to your code, identify bugs, and propose improvements
 Good links to include are:
-A link to the project's main repository
-A link to the project's issue tracker
+[Repo](https://github.com/mo49838/mario)
+[Play the game](https://pensive-payne-6a95b2.netlify.app/)
+[Issue Tracker](https://github.com/mo49838/mario/issues)
