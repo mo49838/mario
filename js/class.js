@@ -95,7 +95,7 @@ class Game {
         // newBoard.style.display = disp;
         // alert('Press Ok when you are ready to start...')
 
-        console.log(this.keys.length + " "+ this.keys["Enter"]== false);
+        //console.log(this.keys.length + " "+ this.keys["Enter"]== false);
         //set level info
         this.frameTotal = level[0].frames;
         this.lvlArray = level[0].lvlObjects;  //contains level objects to be added
