@@ -493,6 +493,8 @@ class Game {
                     this.frontObjs[i]=obj;
                     if (obj.objType != "deleted")
                         obj.paintObject();
+                    else
+                        this.frontObjs[i].objType = "deleted";
 
                     //check for conflict
                     // if (this.checkForCollision(obj)){
