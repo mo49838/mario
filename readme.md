@@ -10,10 +10,27 @@ This project involves creating a game that meets the following requirements:
 My project was focused on creating a knock off of the Mario game.  Since this game was created 
 in 3 days of class, it is a very generic game using smiley faces instead of actual characters. 
 The customization of initial characters is complete, additional levels/charcters/objects can be added through configuratoin of arrays.  The problem this project solves is boredom, Mario is addictive in any form.
-<div align="center">![Mario Gif](https://github.com/mo49838/mario/blob/main/mario.gif)</div>
+<div align="center"> [Mario Gif](https://github.com/mo49838/mario/blob/main/mario.gif)</div>
+
 # List of Features / User Stories
-This typically will be a short list of the features / user stories that you planned during the development phase of the project
-To provide more detail, you can show how you categorized these features into Bronze (MVP), Silver, and Gold Levels and indicate which features you complete / have yet to complete
+## Bronze (MVP)
+- [x] Main character and enemy painted as color on a canvas
+- [x] User can control main character motion (up/down/left/right)
+- [x] Enemies have default motion
+- [x] If main character and a enemy overlap, conflict is caught and game ends
+
+## Silver
+- [x] Game has gravity (characters stop verticle motion on top of an object unless jumping)
+- [x] When main character hits up arrow, a jump is initiated (either straight up or angled)
+- [x] When main character is jumping, it can't initiate another jump until the first jump is complete
+- [x] When a character is in the air, it can only control left/right direction of rise (jumping) or fall
+- [x] When a character conflicts with an enemy, if the bottom of the character is greater than 80% of enemy height then enemy dies.  Otherwise main character dies
+- [x] When a chracter conflicts with a static object (like a block), motion that direction stops
+- [x] When an enemy conflicts with a statis object (like a block), motion that direction is reversed
+
+## Gold Levels
+- [x] User can switch between graphics mode and color mode
+-
 # List of Technologies Used
 Often you will want to list the technologies you used to create the project.
 This typically would consist of all primary languages, frameworks, and libraries your app is composed of
