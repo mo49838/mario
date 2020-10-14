@@ -11,7 +11,7 @@ My project was focused on creating a knock off of the Mario game.  Since this ga
 in 3 days of class, it is a very generic game using smiley faces instead of actual characters. 
 The customization of initial characters is complete, additional levels/charcters/objects can be added through configuratoin of arrays.  The problem this project solves is boredom, Mario is addictive in any form.
 <div align="center">
-  <img src="https://github.com/mo49838/mario/blob/main/mario.gif"></img>
+  <img src="https://github.com/mo49838/mario/blob/main/documentation/mario.gif"></img>
 </div>
 
 # List of Features / User Stories
@@ -58,6 +58,10 @@ The customization of initial characters is complete, additional levels/charcters
 # List of Technologies Used
 * HTML5/CSS3/javascript ES6
 * Note: canvas is the work horse for displaying the board and painting the objects
+* Overview of objects:
+<div align="center">
+  <img src="https://github.com/mo49838/mario/blob/main/documentation/objects.png"></img>
+</div>
 
 # Installation Instructions / Getting Started
 1. Install modern web broswer (Chrome/Edge/Safari/...)
