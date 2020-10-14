@@ -67,5 +67,5 @@ The customization of initial characters is complete, additional levels/charcters
 
 # Contribution Guidelines
 *[Repo](https://github.com/mo49838/mario)  
-*[Play the game](https://pensive-payne-6a95b2.netlify.app/) 
+*[Play the game](https://pensive-payne-6a95b2.netlify.app/)  
 *[Issue Tracker](https://github.com/mo49838/mario/issues) 
