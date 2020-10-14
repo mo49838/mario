@@ -56,7 +56,7 @@ The customization of initial characters is complete, additional levels/charcters
 * When an emeny falls off the bottom of the screen, logging shows that the array of frontObjects has it flagged deleted.  But after the setinterval timer kicks in again, the frontObjects doesn't show it deleted.  Assuming relating to first issue.
 
 # List of Technologies Used
-* HTML5/css/javascript
+* HTML5/CSS3/javascript ES6
 * Note: canvas is the work horse for displaying the board and painting the objects
 
 # Installation Instructions / Getting Started
@@ -66,8 +66,6 @@ The customization of initial characters is complete, additional levels/charcters
 1. Click 'Add Game(s)'
 
 # Contribution Guidelines
-This section should offer guidance on where and how users can contribute to your code, identify bugs, and propose improvements
-Good links to include are:
-[Repo](https://github.com/mo49838/mario)
-[Play the game](https://pensive-payne-6a95b2.netlify.app/)
-[Issue Tracker](https://github.com/mo49838/mario/issues)
+*[Repo](https://github.com/mo49838/mario)  
+*[Play the game](https://pensive-payne-6a95b2.netlify.app/) 
+*[Issue Tracker](https://github.com/mo49838/mario/issues) 
