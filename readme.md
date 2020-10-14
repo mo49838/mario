@@ -10,7 +10,7 @@ This project involves creating a game that meets the following requirements:
 My project was focused on creating a knock off of the Mario game.  Since this game was created 
 in 3 days of class, it is a very generic game using smiley faces instead of actual characters. 
 The customization of initial characters is complete, additional levels/charcters/objects can be added through configuratoin of arrays.  The problem this project solves is boredom, Mario is addictive in any form.
-<div align="center"> [Mario Gif](https://github.com/mo49838/mario/blob/main/mario.gif)</div>
+<img src="https://github.com/mo49838/mario/blob/main/mario.gif"></img>
 
 # List of Features / User Stories
 ## Bronze (MVP)
