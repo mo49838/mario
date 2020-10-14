@@ -60,7 +60,7 @@ The customization of initial characters is complete, additional levels/charcters
 * Note: canvas is the work horse for displaying the board and painting the objects
 * Overview of objects:
 <div align="center">
-  <img src="https://github.com/mo49838/mario/blob/main/documentation/objecst.png"></img>
+  <img src="https://github.com/mo49838/mario/blob/main/documentation/objects.png"></img>
 </div>
 
 # Installation Instructions / Getting Started
