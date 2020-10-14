@@ -115,6 +115,12 @@ class Game {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
+    printScore(){
+        this.context.fillStyle="green";
+        this.context.font = "20px Arial";
+        this.context.fillText(`Score: ${this.points}`, this.width-150, 15);
+    }
+
     //called to refresh screen by updating character positions
     updateScreen(){
         this.timesRun ++;
@@ -136,6 +142,12 @@ class Game {
 
             //clear screen
             this.clear();
+
+            this.printScore();
+
+            //give points for winning
+            if (this.frameNumber == this.frameTotal-1)
+                this.points+=10000;
 
             //check for new objects that should be added
             while(this.lvlArrayInd < this.lvlArray.length && this.lvlArray[this.lvlArrayInd].frame < this.frameNumber){
@@ -182,8 +194,9 @@ class Game {
                 this.lvlArrayInd++;
             }
 
-            // if (this.timesRun%10==0)
-                // console.log(`run ${this.timesRun}`);
+            //increment score every 100 frames
+            // if (this.frameNumber%10==0)
+            //     this.points++;
             //move all foreground elements 
             for (let i=0;i<this.frontObjs.length && this.timesRun < this.stopTime;i++)
             {
@@ -378,6 +391,7 @@ class Game {
                                     {
                                         // console.log("enemy lost " +this.frontObjs[confResult-1].objectType);
                                         //remove enemy from board
+                                        this.points+=otherObj.height*10;
                                         this.frontObjs[confResult-1].objectType = "deleted";
                                         this.aGameBoard.clearObject(this.frontObjs[confResult-1]);
                                         // console.log(this.frontObjs[confResult-1].objectType);
@@ -400,6 +414,7 @@ class Game {
                                     {
                                         // console.log("enemy lost")
                                         removeObject = true;
+                                        this.points+=obj.height*10;
 
                                     //else main character looses
                                     }else{
@@ -459,6 +474,7 @@ class Game {
                         //move screen instead of player
                         if (obj.objectType == "mainChar" && currXMove > 0 && obj.xPos > this.width*.4){
                             this.clear();
+                            this.printScore();
                             this.frameNumber+=currXMove;
                             for (let m=0;m<this.frontObjs.length;m++){
                                 let objToIter = this.frontObjs[m];
